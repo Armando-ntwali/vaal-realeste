@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 324 324" role="img" aria-labelledby="title desc" color="#ffffff">
+  <title id="title">The Bridge logo mark</title>
+  <desc id="desc">Clean geometric bridge mark recreated from the supplied Bridge pattern reference.</desc>
+  <g fill="currentColor">
+    <path d="M0 0H324V108H0Z"/>
+    <path d="M108 108L0 216V324H108Z"/>
+    <path d="M216 108L324 216V324H216Z"/>
+  </g>
+</svg>
