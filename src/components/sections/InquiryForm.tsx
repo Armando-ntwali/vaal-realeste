@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { inquiryOptions } from "@/data/inquiryOptions";
+import { contact } from "@/data/navigation";
 
 export function InquiryForm({ context = "general" }: { context?: string }) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -23,44 +24,46 @@ export function InquiryForm({ context = "general" }: { context?: string }) {
     });
   }, []);
 
+  const sendInquiryToWhatsapp = () => {
+    setStatus("idle");
+
+    if (!formRef.current?.reportValidity()) {
+      return;
+    }
+
+    try {
+      const formData = new FormData(formRef.current);
+      const details = [
+        `Name: ${formData.get("name") || ""}`,
+        `Email: ${formData.get("email") || ""}`,
+        `Phone: ${formData.get("phone") || ""}`,
+        `Residence: ${formData.get("residence_of_interest") || context}`,
+        `Apartment size: ${formData.get("preferred_apartment_size") || ""}`,
+        `Source: ${formData.get("how_did_you_hear_about_us") || ""}`,
+        `Message: ${formData.get("message") || ""}`,
+        `Page: ${metadata.source_page}`
+      ].filter((line) => !line.endsWith(": "));
+
+      const whatsappUrl = `${contact.whatsapp}?text=${encodeURIComponent(`VAAL inquiry\n${details.join("\n")}`)}`;
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+
+      formRef.current.reset();
+      setStatus("success");
+    } catch {
+      setStatus("error");
+    }
+  };
+
   return (
     <form
       ref={formRef}
       name="vaal-inquiry"
-      method="POST"
-      data-netlify="true"
       className="grid gap-5"
-      onSubmit={async (event) => {
+      onSubmit={(event) => {
         event.preventDefault();
-        setStatus("idle");
-
-        if (!formRef.current?.reportValidity()) {
-          return;
-        }
-
-        try {
-          const formData = new FormData(formRef.current);
-          const encoded = new URLSearchParams();
-          formData.forEach((value, key) => encoded.append(key, String(value)));
-
-          const response = await fetch("/", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: encoded.toString()
-          });
-
-          if (!response.ok) {
-            throw new Error("Inquiry submission failed");
-          }
-
-          formRef.current.reset();
-          setStatus("success");
-        } catch {
-          setStatus("error");
-        }
+        sendInquiryToWhatsapp();
       }}
     >
-      <input type="hidden" name="form-name" value="vaal-inquiry" />
       <input type="hidden" name="source_page" value={metadata.source_page} />
       <input type="hidden" name="residence_interest" value={context} />
       <input type="hidden" name="landing_page" value={metadata.landing_page} />
@@ -91,7 +94,8 @@ export function InquiryForm({ context = "general" }: { context?: string }) {
         />
       </label>
       <button
-        type="submit"
+        type="button"
+        onClick={sendInquiryToWhatsapp}
         className="pressable mt-2 min-h-12 border border-vaal-black bg-vaal-black px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.18em] text-white hover:bg-vaal-charcoal"
       >
         Submit Inquiry
@@ -101,12 +105,12 @@ export function InquiryForm({ context = "general" }: { context?: string }) {
           aria-live="polite"
           className="border border-cadenza-champagne/50 bg-cadenza-cream px-5 py-4 text-sm leading-6 text-cadenza-charcoal"
         >
-          Thank you. A VAAL advisor will contact you with the next steps.
+          Thank you. WhatsApp is opening so a VAAL advisor can continue with you directly.
         </p>
       ) : null}
       {status === "error" ? (
         <p aria-live="assertive" className="border border-bridge-burgundy/40 bg-bridge-burgundy/10 px-5 py-4 text-sm leading-6">
-          Your inquiry could not be submitted. Please try again or contact VAAL directly on WhatsApp.
+          Your inquiry could not be prepared. Please contact VAAL directly on WhatsApp.
         </p>
       ) : null}
     </form>

@@ -1,0 +1,19 @@
+.next/
+node_modules/
+out/
+dist/
+build/
+
+audit-output/
+selected-assets/
+final assets/
+vaal_old2/
+vaal_premium_deliverables/
+vaal_premium_deliverables.zip
+*.whtt
+
+public/assets/homepage/home-hero-skyview-source.mp4
+
+*.log
+Thumbs.db
+.DS_Store

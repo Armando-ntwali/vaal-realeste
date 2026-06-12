@@ -13,8 +13,8 @@
 - Amenity cards use portrait ratios.
 - Hero and editorial images use overlays and focal framing rather than stretching.
 
-## Netlify Compatibility
+## Deployment Notes
 
 - The app builds as static App Router pages with `next build`.
-- Inquiry form markup is in `src/components/sections/InquiryForm.tsx` with `form name="vaal-inquiry"`, `method="POST"`, `data-netlify="true"`, and hidden metadata fields.
+- Inquiry form markup is in `src/components/sections/InquiryForm.tsx` and hands off completed inquiries to WhatsApp, so it is not tied to a deployment platform form service.
 - A Neon-backed lead store remains a TODO: create the leads table, store source metadata, add a server route or server action, and connect to CRM later.
